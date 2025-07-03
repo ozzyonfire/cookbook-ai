@@ -31,7 +31,7 @@ export function Login() {
       setResult("Login failed");
     } else {
       setResult("Login successful!");
-      window.location.href = "/users";
+      window.location.href = "/";
     }
   };
 

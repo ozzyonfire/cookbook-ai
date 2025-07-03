@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { RequestInfo } from "rwsdk/worker";
 import { RecipeClient } from "./recipe.client";
+import { Layout } from "@/app/components/Layout";
 
 export async function RecipePage({ params }: RequestInfo) {
   const recipe = await db.recipe.findUnique({
@@ -13,5 +14,9 @@ export async function RecipePage({ params }: RequestInfo) {
     return new Response(null, { status: 404 });
   }
 
-  return <RecipeClient recipe={recipe} />;
+  return (
+    <Layout>
+      <RecipeClient recipe={recipe} />
+    </Layout>
+  );
 }

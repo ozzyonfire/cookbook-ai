@@ -1,6 +1,8 @@
 import type { RequestInfo } from "rwsdk/worker";
 import { db, type Recipe } from "@/db";
 import { RecipePrompt } from "./components/recipe-prompt";
+import { Layout } from "@/app/components/Layout";
+import { Sparkles, ChefHat } from "lucide-react";
 
 async function FeaturedRecipes() {
   const recipes = await db.recipe.findMany({
@@ -13,7 +15,7 @@ async function FeaturedRecipes() {
       {recipes.map((recipe: Recipe) => (
         <div
           key={recipe.id}
-          className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+          className="bg-card rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-border hover:border-primary"
         >
           {recipe.imageUrl && (
             <img
@@ -22,11 +24,11 @@ async function FeaturedRecipes() {
               className="w-full h-48 object-cover"
             />
           )}
-          <div className="p-4">
-            <h3 className="text-lg font-semibold text-gray-800">
+          <div className="p-6">
+            <h3 className="text-lg font-semibold text-card-foreground mb-2">
               {recipe.title}
             </h3>
-            <p className="text-gray-600 mt-2 line-clamp-2">
+            <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
               {recipe.description}
             </p>
           </div>
@@ -53,10 +55,22 @@ export async function MainPage({ ctx }: RequestInfo) {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+    <Layout>
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Hero Section */}
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
+            Create Amazing Recipes
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Tell us what you'd like to cook today and let our AI help you create
+            the perfect recipe tailored to your taste
+          </p>
+        </div>
+
+        {/* Recipe Prompt */}
         <RecipePrompt />
       </div>
-    </div>
+    </Layout>
   );
 }

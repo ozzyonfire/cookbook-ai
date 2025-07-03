@@ -5,4 +5,5 @@ export const link = defineLinks([
   "/user/login",
   "/user/logout",
   "/recipe/:id",
+  "/recipes",
 ]);
