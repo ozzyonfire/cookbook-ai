@@ -19,6 +19,8 @@ import {
 import { Home, BookOpen, ChefHat, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { link } from "@/app/shared/links";
+import { ThemeProvider } from "@/app/context/ThemeProvider";
+import { ThemeToggle } from "@/app/components/ThemeToggle";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -33,23 +35,24 @@ export function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <SidebarProvider>
-      <Sidebar collapsible="icon">
-        <SidebarHeader>
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary">
-              <ChefHat className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <div>
-              <span className="font-bold text-lg text-foreground">
-                Meal Bot
-              </span>
-              <div className="text-xs text-muted-foreground">
-                What's for dinner?
+    <ThemeProvider>
+      <SidebarProvider>
+        <Sidebar collapsible="icon">
+          <SidebarHeader>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary">
+                <ChefHat className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <div>
+                <span className="font-bold text-lg text-foreground">
+                  Meal Bot
+                </span>
+                <div className="text-xs text-muted-foreground">
+                  What's for dinner?
+                </div>
               </div>
             </div>
-          </div>
-        </SidebarHeader>
+          </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-normal">
@@ -101,11 +104,15 @@ export function Layout({ children }: LayoutProps) {
               <span className="font-bold text-foreground">Cookbook</span>
             </div>
           </div>
+          <div className="ml-auto px-4">
+            <ThemeToggle />
+          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-6 bg-background min-h-screen">
           {children}
         </div>
       </SidebarInset>
     </SidebarProvider>
+    </ThemeProvider>
   );
 }
