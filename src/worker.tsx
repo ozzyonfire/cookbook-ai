@@ -11,6 +11,7 @@ import { env } from "cloudflare:workers";
 import { MainPage } from "./app/pages";
 import { RecipePage } from "./app/pages/recipe/RecipePage";
 import generateSuggestionsHandler from "./app/api/generate/suggestions";
+import themeHandler from "./app/api/theme";
 export { SessionDurableObject } from "./session/durableObject";
 
 export type AppContext = {
@@ -64,6 +65,7 @@ export default defineApp([
     prefix("/user", userRoutes),
     prefix("/api", [
       route("/generate/suggestions", generateSuggestionsHandler),
+      route("/theme", themeHandler),
     ]),
     route("/recipe/:id", RecipePage),
   ]),
