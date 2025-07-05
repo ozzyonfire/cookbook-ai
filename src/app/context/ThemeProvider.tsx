@@ -4,7 +4,11 @@ import * as React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { setThemeFn } from "../theme/functions";
 
-type Theme = "light" | "dark";
+export type Theme = "light" | "dark";
+
+export function isTheme(theme: string | undefined): theme is Theme {
+  return theme === "light" || theme === "dark";
+}
 
 interface ThemeContextType {
   theme: Theme;
@@ -50,21 +54,6 @@ export function ThemeProvider({
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
-
-  // Initialize theme from document class on mount
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      const root = document.documentElement;
-      const isDark = root.classList.contains("dark");
-      const isLight = root.classList.contains("light");
-
-      if (isDark) {
-        setThemeState("dark");
-      } else if (isLight) {
-        setThemeState("light");
-      }
-    }
-  }, []);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>

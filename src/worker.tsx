@@ -15,11 +15,12 @@ import themeHandler from "./app/api/theme";
 export { SessionDurableObject } from "./session/durableObject";
 import * as cookie from "cookie";
 import { Layout } from "./app/components/Layout";
+import { isTheme, type Theme } from "./app/context/ThemeProvider";
 
 export type AppContext = {
   session: Session | null;
   user: User | null;
-  theme: string | null;
+  theme: Theme | null;
   sidebar: boolean | null;
 };
 
@@ -55,7 +56,14 @@ export default defineApp([
   },
   async ({ ctx, request, headers }) => {
     const cookies = cookie.parse(request.headers.get("Cookie") || "");
-    ctx.theme = cookies.theme || null;
+    let theme: Theme;
+    if (isTheme(cookies.theme)) {
+      theme = cookies.theme;
+    } else {
+      theme = "light";
+    }
+
+    ctx.theme = theme;
     ctx.sidebar = cookies["sidebar_state_mealbot"] === "true" ? true : false;
   },
   render(

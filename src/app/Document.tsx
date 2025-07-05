@@ -1,26 +1,27 @@
+import { cn } from "@/lib/utils";
 import styles from "./styles.css?url";
 import { requestInfo } from "rwsdk/worker";
 
 function getThemeFromCookies(cookieHeader: string | null): string {
   if (!cookieHeader) return "light";
-  
-  const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
-    const [key, value] = cookie.trim().split('=');
+
+  const cookies = cookieHeader.split(";").reduce((acc, cookie) => {
+    const [key, value] = cookie.trim().split("=");
     acc[key] = value;
     return acc;
   }, {} as Record<string, string>);
-  
+
   return cookies.theme === "dark" ? "dark" : "light";
 }
 
 export const Document: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { request } = requestInfo;
-  const theme = getThemeFromCookies(request.headers.get('Cookie'));
-  
+  const { ctx } = requestInfo;
+  const theme = ctx?.theme ?? "light";
+
   return (
-    <html lang="en" className={theme}>
+    <html lang="en" className={cn(theme)}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -45,7 +46,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
           }}
         />
       </head>
-      <body>
+      <body className="bg-background">
         <div id="root">{children}</div>
         <script>import("/src/client.tsx")</script>
       </body>

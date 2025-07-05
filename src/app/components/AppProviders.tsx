@@ -19,21 +19,19 @@ import {
 import { Home, BookOpen, ChefHat, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { link } from "@/app/shared/links";
-import { ThemeProvider } from "@/app/context/ThemeProvider";
+import { ThemeProvider, type Theme } from "@/app/context/ThemeProvider";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { AppSidebar } from "./AppSidebar";
 
 export function AppProviders(props: {
   children: React.ReactNode;
-  theme: string | null;
+  theme: Theme | null;
   sidebar: boolean | null;
 }) {
-  const { children, sidebar } = props;
-
-  console.log(sidebar);
+  const { children, sidebar, theme } = props;
 
   return (
-    <ThemeProvider>
+    <ThemeProvider defaultTheme={theme ?? "light"}>
       <SidebarProvider defaultOpen={sidebar ?? true}>
         {/* <Sidebar collapsible="icon">
           <SidebarHeader>
@@ -111,10 +109,13 @@ export function AppProviders(props: {
           </div>
         </SidebarInset> */}
         <AppSidebar />
-        <main>
-          <SidebarTrigger className="text-foreground" />
-          {children}
-        </main>
+        <SidebarInset>
+          <div className="flex gap-1 items-center p-1">
+            <SidebarTrigger className="text-foreground" />
+            <ThemeToggle />
+          </div>
+          <div className="p-6">{children}</div>
+        </SidebarInset>
       </SidebarProvider>
     </ThemeProvider>
   );
