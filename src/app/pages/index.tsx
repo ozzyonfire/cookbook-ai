@@ -55,22 +55,20 @@ export async function MainPage({ ctx }: RequestInfo) {
   });
 
   return (
-    <Layout>
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Hero Section */}
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-            Create Amazing Recipes
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Tell us what you'd like to cook today and let our AI help you create
-            the perfect recipe tailored to your taste
-          </p>
-        </div>
-
-        {/* Recipe Prompt */}
-        <RecipePrompt />
+    <div className="container mx-auto">
+      {/* Hero Section */}
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
+          Create Amazing Recipes
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          Tell us what you'd like to cook today and let our AI help you create
+          the perfect recipe tailored to your taste
+        </p>
       </div>
-    </Layout>
+
+      {/* Recipe Prompt */}
+      <RecipePrompt />
+    </div>
   );
 }

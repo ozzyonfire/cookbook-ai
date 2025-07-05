@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
+import { setThemeFn } from "../theme/functions";
 
 type Theme = "light" | "dark";
 
@@ -26,26 +27,23 @@ interface ThemeProviderProps {
   defaultTheme?: Theme;
 }
 
-export function ThemeProvider({ children, defaultTheme = "light" }: ThemeProviderProps) {
+export function ThemeProvider({
+  children,
+  defaultTheme = "light",
+}: ThemeProviderProps) {
   const [theme, setThemeState] = useState<Theme>(defaultTheme);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
-    
+
     // Update the document class
-    if (typeof document !== 'undefined') {
+    if (typeof document !== "undefined") {
       const root = document.documentElement;
-      root.classList.remove('light', 'dark');
+      root.classList.remove("light", "dark");
       root.classList.add(newTheme);
-      
+
       // Update the cookie via server action
-      fetch('/api/theme', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ theme: newTheme }),
-      }).catch(console.error);
+      setThemeFn(newTheme);
     }
   };
 
@@ -55,15 +53,15 @@ export function ThemeProvider({ children, defaultTheme = "light" }: ThemeProvide
 
   // Initialize theme from document class on mount
   useEffect(() => {
-    if (typeof document !== 'undefined') {
+    if (typeof document !== "undefined") {
       const root = document.documentElement;
-      const isDark = root.classList.contains('dark');
-      const isLight = root.classList.contains('light');
-      
+      const isDark = root.classList.contains("dark");
+      const isLight = root.classList.contains("light");
+
       if (isDark) {
-        setThemeState('dark');
+        setThemeState("dark");
       } else if (isLight) {
-        setThemeState('light');
+        setThemeState("light");
       }
     }
   }, []);

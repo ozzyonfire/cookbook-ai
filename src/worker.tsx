@@ -1,5 +1,5 @@
 import { defineApp, ErrorResponse } from "rwsdk/worker";
-import { route, render, prefix } from "rwsdk/router";
+import { route, render, prefix, layout } from "rwsdk/router";
 import { Document } from "@/app/Document";
 import { Home } from "@/app/pages/Home";
 import { setCommonHeaders } from "@/app/headers";
@@ -13,10 +13,14 @@ import { RecipePage } from "./app/pages/recipe/RecipePage";
 import generateSuggestionsHandler from "./app/api/generate/suggestions";
 import themeHandler from "./app/api/theme";
 export { SessionDurableObject } from "./session/durableObject";
+import * as cookie from "cookie";
+import { Layout } from "./app/components/Layout";
 
 export type AppContext = {
   session: Session | null;
   user: User | null;
+  theme: string | null;
+  sidebar: boolean | null;
 };
 
 export default defineApp([
@@ -49,24 +53,32 @@ export default defineApp([
       });
     }
   },
-  render(Document, [
-    route("/", MainPage),
-    route("/protected", [
-      ({ ctx }) => {
-        if (!ctx.user) {
-          return new Response(null, {
-            status: 302,
-            headers: { Location: "/user/login" },
-          });
-        }
-      },
-      Home,
-    ]),
-    prefix("/user", userRoutes),
-    prefix("/api", [
-      route("/generate/suggestions", generateSuggestionsHandler),
-      route("/theme", themeHandler),
-    ]),
-    route("/recipe/:id", RecipePage),
+  async ({ ctx, request, headers }) => {
+    const cookies = cookie.parse(request.headers.get("Cookie") || "");
+    ctx.theme = cookies.theme || null;
+    ctx.sidebar = cookies["sidebar_state_mealbot"] === "true" ? true : false;
+  },
+  render(
+    Document,
+    layout(Layout, [
+      route("/", MainPage),
+      route("/protected", [
+        ({ ctx }) => {
+          if (!ctx.user) {
+            return new Response(null, {
+              status: 302,
+              headers: { Location: "/user/login" },
+            });
+          }
+        },
+        Home,
+      ]),
+      prefix("/user", userRoutes),
+      route("/recipe/:id", RecipePage),
+    ])
+  ),
+  prefix("/api", [
+    route("/generate/suggestions", generateSuggestionsHandler),
+    route("/theme", themeHandler),
   ]),
 ]);
