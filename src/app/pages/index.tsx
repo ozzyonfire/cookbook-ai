@@ -55,7 +55,7 @@ export async function MainPage({ ctx }: RequestInfo) {
   });
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto space-y-12">
       {/* Hero Section */}
       <div className="text-center space-y-4">
         <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">

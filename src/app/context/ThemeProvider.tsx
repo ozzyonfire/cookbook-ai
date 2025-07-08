@@ -3,12 +3,7 @@
 import * as React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { setThemeFn } from "../theme/functions";
-
-export type Theme = "light" | "dark";
-
-export function isTheme(theme: string | undefined): theme is Theme {
-  return theme === "light" || theme === "dark";
-}
+import type { Theme } from "../shared/theme";
 
 interface ThemeContextType {
   theme: Theme;

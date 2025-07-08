@@ -15,7 +15,7 @@ import themeHandler from "./app/api/theme";
 export { SessionDurableObject } from "./session/durableObject";
 import * as cookie from "cookie";
 import { Layout } from "./app/components/Layout";
-import { isTheme, type Theme } from "./app/context/ThemeProvider";
+import { isTheme, type Theme } from "./app/shared/theme";
 
 export type AppContext = {
   session: Session | null;

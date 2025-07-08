@@ -1,5 +1,6 @@
 "use server";
 
+import type { MealSuggestion } from "@/app/api/generate/suggestions/schema";
 import { db } from "@/db";
 import { getRequestInfo } from "rwsdk/worker";
 
@@ -30,4 +31,23 @@ export async function handleNewRecipe(
   console.log(recipe);
 
   return { success: recipe.id };
+}
+
+export async function createRecipeFromSuggestion(
+  prompt: string,
+  suggestion: MealSuggestion
+) {
+  const { ctx } = getRequestInfo();
+
+  if (!ctx.user) {
+    return { error: "You must be logged in to generate a recipe" };
+  }
+
+  const recipe = await db.recipe.create({
+    data: {
+      prompt,
+      status: "PENDING",
+      userId: ctx.user.id,
+    },
+  });
 }
