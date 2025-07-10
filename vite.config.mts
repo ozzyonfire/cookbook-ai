@@ -8,10 +8,10 @@ export default defineConfig({
     ssr: {},
   },
   plugins: [
-    redwood(),
-    tailwindcss(),
     cloudflare({
       viteEnvironment: { name: "worker" },
     }),
+    redwood(),
+    tailwindcss(),
   ],
 });

@@ -28,7 +28,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
         <title>@redwoodjs/starter-standard</title>
         <link rel="modulepreload" href="/src/client.tsx" />
         <link rel="stylesheet" href={styles} />
-        <script
+        {/* <script
           dangerouslySetInnerHTML={{
             __html: `
               // Prevent FOUC by immediately applying theme
@@ -44,7 +44,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
               })();
             `,
           }}
-        />
+        /> */}
       </head>
       <body className="bg-background">
         <div id="root">{children}</div>

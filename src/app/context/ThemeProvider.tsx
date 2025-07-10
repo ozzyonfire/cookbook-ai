@@ -30,25 +30,22 @@ export function ThemeProvider({
   children,
   defaultTheme = "light",
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(defaultTheme);
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
 
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-
-    // Update the document class
+  useEffect(() => {
     if (typeof document !== "undefined") {
       const root = document.documentElement;
       root.classList.remove("light", "dark");
-      root.classList.add(newTheme);
+      root.classList.add(theme);
 
       // Update the cookie via server action
-      setThemeFn(newTheme);
+      setThemeFn(theme);
     }
-  };
+  }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
+  const toggleTheme = React.useCallback(() => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  }, [setTheme]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>

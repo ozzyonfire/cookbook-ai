@@ -9,7 +9,7 @@ const openai = createOpenAI({
 });
 
 const generateSuggestionsHandler = async ({ request }: RequestInfo) => {
-  const body = (await request.json()) as { prompt: string };
+  const body = (await request.json()) as { prompt: string; tags: string[] };
 
   const result = streamObject({
     model: openai("gpt-4.1-mini"),
@@ -26,8 +26,9 @@ const generateSuggestionsHandler = async ({ request }: RequestInfo) => {
       {
         role: "user",
         content: `
-        Generate 3 meal suggestions for the following prompt:
+        Generate 3 meal suggestions for the following prompt and user selected tags:
         ${body.prompt}
+        ${body.tags.map((tag) => `- ${tag}`).join("\n")}
         `,
       },
     ],

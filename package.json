@@ -28,9 +28,9 @@
     "shadcn": "pnpx shadcn@latest"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^1.3.22",
+    "@ai-sdk/openai": "^1.3.23",
     "@ai-sdk/react": "^1.2.12",
-    "@cloudflare/vite-plugin": "^1.9.0",
+    "@cloudflare/vite-plugin": "^1.9.1",
     "@prisma/adapter-d1": "~6.8.2",
     "@prisma/client": "~6.8.2",
     "@radix-ui/react-collapsible": "^1.1.11",
@@ -41,32 +41,32 @@
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
-    "@simplewebauthn/browser": "^13.1.0",
-    "@simplewebauthn/server": "^13.1.1",
+    "@simplewebauthn/browser": "^13.1.2",
+    "@simplewebauthn/server": "^13.1.2",
     "@tailwindcss/vite": "^4.1.11",
-    "ai": "^4.3.16",
+    "ai": "^4.3.17",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "cookie": "^1.0.2",
     "lucide-react": "^0.513.0",
-    "rwsdk": "0.1.2",
+    "rwsdk": "0.1.13",
     "swr": "^1.3.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
-    "zod": "^3.25.74"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@types/node": "^22.16.0",
+    "@types/node": "^22.16.2",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "prisma": "~6.8.2",
-    "shadcn": "^2.7.0",
+    "shadcn": "^2.8.0",
     "tw-animate-css": "^1.3.5",
     "typescript": "^5.8.3",
     "vibe-rules": "^0.2.57",
     "vite": "^6.3.5",
-    "wrangler": "^4.23.0"
+    "wrangler": "^4.24.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

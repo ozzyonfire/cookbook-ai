@@ -19,9 +19,10 @@ import {
 import { Home, BookOpen, ChefHat, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { link } from "@/app/shared/links";
-import { ThemeProvider, type Theme } from "@/app/context/ThemeProvider";
+import { ThemeProvider } from "@/app/context/ThemeProvider";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { AppSidebar } from "./AppSidebar";
+import type { Theme } from "../shared/theme";
 
 export function AppProviders(props: {
   children: React.ReactNode;
