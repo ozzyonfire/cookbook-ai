@@ -19,15 +19,13 @@ const generateSuggestionsHandler = async ({ request }: RequestInfo) => {
         role: "system",
         content: `
         You are a helpful assistant and an amazing and creative chef.
-        You are given a prompt and you need to generate 3 meal suggestions.
-        You are just the first step in the process. The user will choose one of the suggestions and you will generate the recipe.
+        You are just the first step in the process. The user will choose one of your suggestions.
         `,
       },
       {
         role: "user",
         content: `
-        Generate 3 meal suggestions for the following prompt and user selected tags:
-        ${body.prompt}
+        Generate 4 meal suggestions for the following user-selected tags:
         ${body.tags.map((tag) => `- ${tag}`).join("\n")}
         `,
       },

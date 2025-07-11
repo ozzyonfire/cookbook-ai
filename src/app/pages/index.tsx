@@ -1,9 +1,6 @@
-import type { RequestInfo } from "rwsdk/worker";
 import { db, type Recipe } from "@/db";
+import type { RequestInfo } from "rwsdk/worker";
 import { RecipePrompt } from "./components/recipe-prompt";
-import { Layout } from "@/app/components/Layout";
-import { Sparkles, ChefHat } from "lucide-react";
-import { Suspense } from "react";
 
 async function FeaturedRecipes() {
   const recipes = await db.recipe.findMany({

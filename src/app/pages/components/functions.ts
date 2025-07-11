@@ -10,10 +10,10 @@ export async function handleNewRecipe(
 ) {
   const { ctx } = getRequestInfo();
 
-  const prompt = formData.get("prompt") as string;
+  const selectedTags = formData.get("selectedTags") as string;
 
-  if (!prompt) {
-    return { error: "Prompt is required" };
+  if (!selectedTags) {
+    return { error: "Tags are required" };
   }
 
   if (!ctx.user) {
@@ -22,7 +22,7 @@ export async function handleNewRecipe(
 
   const recipe = await db.recipe.create({
     data: {
-      prompt,
+      tags: selectedTags,
       status: "PENDING",
       userId: ctx.user.id,
     },
@@ -34,7 +34,7 @@ export async function handleNewRecipe(
 }
 
 export async function createRecipeFromSuggestion(
-  prompt: string,
+  selectedTags: string[],
   suggestion: MealSuggestion
 ) {
   const { ctx } = getRequestInfo();
@@ -45,9 +45,13 @@ export async function createRecipeFromSuggestion(
 
   const recipe = await db.recipe.create({
     data: {
-      prompt,
+      tags: selectedTags.join(","),
+      title: suggestion.title,
+      description: suggestion.description,
       status: "PENDING",
       userId: ctx.user.id,
     },
   });
+
+  return { success: recipe.id };
 }

@@ -86,6 +86,15 @@ export const occasions = [
   "using leftovers",
   "impress guests",
   "big family gathering",
+  "picnic",
+  "beach",
+  "camping",
+  "road trip",
+  "backpacking",
+  "hiking",
+  "fishing",
+  "hunting",
+  "barbecue",
 ];
 
 export const cookingGoals = [
@@ -94,3 +103,5 @@ export const cookingGoals = [
   "comfort food",
   "quick and easy",
 ];
+
+export const audience = ["kids", "toddlers", "adults", "teens", "seniors"];

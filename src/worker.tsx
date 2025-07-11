@@ -7,10 +7,12 @@ import { env } from "cloudflare:workers";
 import * as cookie from "cookie";
 import { layout, prefix, render, route } from "rwsdk/router";
 import { defineApp, ErrorResponse } from "rwsdk/worker";
+import generateRecipeHandler from "./app/api/generate/recipe";
 import generateSuggestionsHandler from "./app/api/generate/suggestions";
 import { Layout } from "./app/components/Layout";
 import { MainPage } from "./app/pages";
-import { RecipePage } from "./app/pages/recipe/RecipePage";
+import { RecipesPage } from "./app/pages/recipes";
+import { RecipePage } from "./app/pages/recipes/[id]/recipe.page";
 import { isTheme, type Theme } from "./app/shared/theme";
 import { Session } from "./session/durableObject";
 import { sessions, setupSessionStore } from "./session/store";
@@ -68,8 +70,7 @@ export default defineApp([
   render(
     Document,
     layout(Layout, [
-      route("/", MainPage),
-      route("/protected", [
+      route("/", [
         ({ ctx }) => {
           if (!ctx.user) {
             return new Response(null, {
@@ -78,11 +79,15 @@ export default defineApp([
             });
           }
         },
-        Home,
+        MainPage,
       ]),
       prefix("/user", userRoutes),
-      route("/recipe/:id", RecipePage),
+      route("/recipes", RecipesPage),
+      route("/recipes/:id", RecipePage),
     ])
   ),
-  prefix("/api", [route("/generate/suggestions", generateSuggestionsHandler)]),
+  prefix("/api", [
+    route("/generate/suggestions", generateSuggestionsHandler),
+    route("/generate/recipe", generateRecipeHandler),
+  ]),
 ]);

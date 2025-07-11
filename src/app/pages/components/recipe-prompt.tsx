@@ -1,4 +1,5 @@
 "use client";
+
 import {
   mealSuggestionsSchema,
   type MealSuggestion,
@@ -13,12 +14,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
-import { Check, Clock, Plus, Send, Sparkles, X } from "lucide-react";
+import { Clock, Plus, Send, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { createRecipeFromSuggestion } from "./functions";
+import MealSuggestionCard from "./meal-suggestion";
 import {
+  audience,
   cookingEquipment,
   cookingGoals,
   cookingTime,
@@ -29,14 +33,10 @@ import {
   occasions,
   proteins,
 } from "./prompts";
-import { Input } from "@/components/ui/input";
 
 export function RecipePrompt() {
   const [addTagValue, setAddTagValue] = useState<string>("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(
-    null
-  );
   const { submit, object, error, isLoading } = useObject({
     api: "/api/generate/suggestions",
     schema: mealSuggestionsSchema,
@@ -49,10 +49,13 @@ export function RecipePrompt() {
     },
   });
 
-  const handleSuggestionSelect = (suggestion?: MealSuggestion) => {
+  const handleSuggestionSelect = async (suggestion?: MealSuggestion) => {
     if (!suggestion) return;
-    setSelectedSuggestion(suggestion.title);
-    createRecipeFromSuggestion(suggestion.title, suggestion);
+    const result = await createRecipeFromSuggestion(selectedTags, suggestion);
+    console.log(result);
+    if (result.success) {
+      window.location.href = `/recipes/${result.success}`;
+    }
   };
 
   return (
@@ -124,6 +127,12 @@ export function RecipePrompt() {
               tags={dishTypes}
               title="Dish Type"
             />
+            <TagSelector
+              selectedTags={selectedTags}
+              setSelectedTags={setSelectedTags}
+              tags={audience}
+              title="Audience"
+            />
           </div>
           {selectedTags.length > 0 && (
             <div className="flex gap-2 flex-wrap items-center">
@@ -192,6 +201,7 @@ export function RecipePrompt() {
 
       {/* Suggestions Section */}
       {object?.suggestions && object.suggestions.length > 0 && (
+        // {true && (
         <div className="space-y-6">
           <div className="text-center">
             <h3 className="text-2xl font-bold mb-2 text-foreground">
@@ -203,75 +213,12 @@ export function RecipePrompt() {
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {object.suggestions.map((suggestion, index) => (
-              <Card
-                key={`${suggestion?.title}-${index}`}
-                className={`group relative overflow-hidden cursor-pointer ${
-                  selectedSuggestion === suggestion?.title
-                    ? "ring-2 ring-primary"
-                    : ""
-                }`}
-              >
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold group-hover:text-primary">
-                    {suggestion?.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                    {suggestion?.description}
-                  </p>
-                  {suggestion?.ingredients &&
-                    suggestion.ingredients.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {suggestion.ingredients
-                          .slice(0, 3)
-                          .map((tag, tagIndex) => (
-                            <Badge
-                              key={tagIndex}
-                              variant="secondary"
-                              className="text-xs"
-                            >
-                              {tag}
-                            </Badge>
-                          ))}
-                      </div>
-                    )}
-                  {suggestion?.difficulty && (
-                    <Badge variant="outline" className="text-xs">
-                      {suggestion.difficulty}
-                    </Badge>
-                  )}
-                  {suggestion?.time && (
-                    <Badge variant="outline" className="text-xs">
-                      {suggestion.time}
-                    </Badge>
-                  )}
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    size="sm"
-                    className="w-full"
-                    variant={
-                      selectedSuggestion === suggestion?.title
-                        ? "default"
-                        : "secondary"
-                    }
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSuggestionSelect(suggestion as MealSuggestion);
-                    }}
-                  >
-                    {selectedSuggestion === suggestion?.title ? (
-                      <>
-                        <Check className="h-3.5 w-3.5 mr-2" />
-                        Selected
-                      </>
-                    ) : (
-                      "Make this!"
-                    )}
-                  </Button>
-                </CardFooter>
-              </Card>
+              // {sampleSuggestions.map((suggestion, index) => (
+              <MealSuggestionCard
+                key={index}
+                suggestion={suggestion as MealSuggestion}
+                onClick={handleSuggestionSelect}
+              />
             ))}
           </div>
         </div>

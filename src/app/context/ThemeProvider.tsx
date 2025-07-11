@@ -35,8 +35,11 @@ export function ThemeProvider({
   useEffect(() => {
     if (typeof document !== "undefined") {
       const root = document.documentElement;
-      root.classList.remove("light", "dark");
-      root.classList.add(theme);
+      const currentTheme = root.classList.contains("light") ? "light" : "dark";
+      if (currentTheme !== theme) {
+        root.classList.remove(currentTheme);
+        root.classList.add(theme);
+      }
 
       // Update the cookie via server action
       setThemeFn(theme);

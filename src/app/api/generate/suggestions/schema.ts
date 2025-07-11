@@ -11,7 +11,11 @@ export const mealSuggestionsSchema = z.object({
       difficulty: z
         .enum(["easy", "medium", "hard"])
         .describe("The difficulty of the meal suggestion."),
-      time: z.number().describe("The time to prepare the meal in minutes."),
+      time: z
+        .string()
+        .describe(
+          "The time it takes to prepare the meal (eg. 10 minutes, 30 minutes, 1 hour, etc.)."
+        ),
     })
   ),
 });

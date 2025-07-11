@@ -24,66 +24,66 @@ export async function RecipesPage({ ctx }: RequestInfo) {
   });
 
   return (
-    <Layout>
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-3 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl shadow-lg">
-              <BookOpen className="h-8 w-8 text-white" />
-            </div>
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="p-3 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl shadow-lg">
+            <BookOpen className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 dark:from-slate-100 dark:via-slate-200 dark:to-slate-100 bg-clip-text text-transparent leading-tight">
-            Your Recipe Collection
-          </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            {recipes.length === 0
-              ? "Start building your personal cookbook with AI-generated recipes"
-              : `Discover ${recipes.length} amazing recipe${
-                  recipes.length === 1 ? "" : "s"
-                } in your collection`}
-          </p>
         </div>
+        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 dark:from-slate-100 dark:via-slate-200 dark:to-slate-100 bg-clip-text text-transparent leading-tight">
+          Your Recipe Collection
+        </h1>
+        <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          {recipes.length === 0
+            ? "Start building your personal cookbook with AI-generated recipes"
+            : `Discover ${recipes.length} amazing recipe${
+                recipes.length === 1 ? "" : "s"
+              } in your collection`}
+        </p>
+      </div>
 
-        {recipes.length === 0 ? (
-          <Card className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border-slate-200 dark:border-slate-600">
-            <CardContent className="pt-12 pb-12">
-              <div className="text-center space-y-6">
-                <div className="p-4 bg-gradient-to-br from-orange-400 to-red-500 rounded-3xl shadow-lg mx-auto w-fit">
-                  <ChefHat className="h-12 w-12 text-white" />
-                </div>
-                <div className="space-y-3">
-                  <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100">
-                    Ready to start cooking?
-                  </h3>
-                  <p className="text-slate-600 dark:text-slate-300 max-w-md mx-auto">
-                    You haven't saved any recipes yet. Create your first
-                    AI-powered recipe and start building your personal cookbook.
-                  </p>
-                </div>
-                <Button
-                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-200"
-                  onClick={() => {
-                    window.location.href = "/";
-                  }}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Your First Recipe
-                </Button>
+      {recipes.length === 0 ? (
+        <Card className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 border-slate-200 dark:border-slate-600">
+          <CardContent className="pt-12 pb-12">
+            <div className="text-center space-y-6">
+              <div className="p-4 bg-gradient-to-br from-orange-400 to-red-500 rounded-3xl shadow-lg mx-auto w-fit">
+                <ChefHat className="h-12 w-12 text-white" />
               </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {recipes.map((recipe: Recipe) => (
+              <div className="space-y-3">
+                <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100">
+                  Ready to start cooking?
+                </h3>
+                <p className="text-slate-600 dark:text-slate-300 max-w-md mx-auto">
+                  You haven't saved any recipes yet. Create your first
+                  AI-powered recipe and start building your personal cookbook.
+                </p>
+              </div>
+              <Button
+                className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-200"
+                // onClick={() => {
+                //   window.location.href = "/";
+                // }}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Your First Recipe
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {recipes.map((recipe: Recipe) => (
+            <a href={link("/recipes/:id", { id: recipe.id })}>
               <Card
                 key={recipe.id}
                 className="group bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden hover:border-slate-300 dark:hover:border-slate-600"
-                onClick={() => {
-                  window.location.href = link("/recipe/:id", {
-                    id: recipe.id,
-                  });
-                }}
+                // onClick={() => {
+                //   window.location.href = link("/recipe/:id", {
+                //     id: recipe.id,
+                //   });
+                // }}
               >
                 {recipe.imageUrl ? (
                   <div className="aspect-video overflow-hidden">
@@ -120,25 +120,25 @@ export async function RecipesPage({ ctx }: RequestInfo) {
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        )}
+            </a>
+          ))}
+        </div>
+      )}
 
-        {recipes.length > 0 && (
-          <div className="text-center pt-8">
-            <Button
-              variant="outline"
-              className="bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 transition-all duration-200"
-              onClick={() => {
-                window.location.href = "/";
-              }}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Another Recipe
-            </Button>
-          </div>
-        )}
-      </div>
-    </Layout>
+      {recipes.length > 0 && (
+        <div className="text-center pt-8">
+          <Button
+            variant="outline"
+            className="bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 transition-all duration-200"
+            // onClick={() => {
+            //   window.location.href = "/";
+            // }}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Create Another Recipe
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }
