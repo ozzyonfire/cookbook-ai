@@ -25,7 +25,7 @@ export default function MealSuggestionCard(props: {
           {suggestion?.title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 grow">
         <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
           {suggestion?.description}
         </p>
@@ -57,7 +57,7 @@ export default function MealSuggestionCard(props: {
           )}
         </div>
       </CardContent>
-      <CardFooter className="grow">
+      <CardFooter>
         <Button
           size="sm"
           className="w-full"

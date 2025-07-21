@@ -1,7 +1,9 @@
 "use server";
 
 import type { GeneratedRecipe } from "@/app/api/generate/recipe/schema";
+import type { RecipeTweak } from "@/app/api/generate/recipe-tweaks/schema";
 import { db } from "@/db";
+import { getRequestInfo } from "rwsdk/worker";
 
 export async function handleGeneratedRecipe(
   recipeId: string,
@@ -39,4 +41,35 @@ export async function handleGeneratedRecipe(
       status: "COMPLETED",
     },
   });
+}
+
+export async function createRecipeFromTweak(
+  originalRecipeId: string,
+  tweak: RecipeTweak
+) {
+  const { ctx } = getRequestInfo();
+
+  if (!ctx.user) {
+    return { error: "You must be logged in to create a recipe" };
+  }
+
+  const originalRecipe = await db.recipe.findUnique({
+    where: { id: originalRecipeId },
+  });
+
+  if (!originalRecipe) {
+    return { error: "Original recipe not found" };
+  }
+
+  const recipe = await db.recipe.create({
+    data: {
+      tags: originalRecipe.tags,
+      title: tweak.title,
+      description: tweak.description,
+      status: "PENDING",
+      userId: ctx.user.id,
+    },
+  });
+
+  return { success: recipe.id };
 }

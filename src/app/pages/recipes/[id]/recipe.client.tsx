@@ -36,7 +36,6 @@ export function RecipeClient({ recipe }: { recipe: Recipe }) {
 
   return (
     <div className="space-y-4 mt-8">
-      {isLoading && <div>Loading...</div>}
       {error && <div>Error: {error.message}</div>}
       {object && (
         <div className="space-y-4">
@@ -46,7 +45,7 @@ export function RecipeClient({ recipe }: { recipe: Recipe }) {
           />
           <IngredientOrStepList
             items={object.instructions || []}
-            title="Instructions"
+            title="Steps"
           />
         </div>
       )}

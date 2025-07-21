@@ -9,6 +9,7 @@ import { layout, prefix, render, route } from "rwsdk/router";
 import { defineApp, ErrorResponse } from "rwsdk/worker";
 import generateRecipeHandler from "./app/api/generate/recipe";
 import generateSuggestionsHandler from "./app/api/generate/suggestions";
+import generateRecipeTweaksHandler from "./app/api/generate/recipe-tweaks";
 import { Layout } from "./app/components/Layout";
 import { MainPage } from "./app/pages";
 import { RecipesPage } from "./app/pages/recipes";
@@ -89,5 +90,6 @@ export default defineApp([
   prefix("/api", [
     route("/generate/suggestions", generateSuggestionsHandler),
     route("/generate/recipe", generateRecipeHandler),
+    route("/generate/recipe-tweaks", generateRecipeTweaksHandler),
   ]),
 ]);
