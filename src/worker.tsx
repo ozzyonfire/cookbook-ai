@@ -10,6 +10,7 @@ import { defineApp, ErrorResponse } from "rwsdk/worker";
 import generateRecipeHandler from "./app/api/generate/recipe";
 import generateSuggestionsHandler from "./app/api/generate/suggestions";
 import generateRecipeTweaksHandler from "./app/api/generate/recipe-tweaks";
+import generateIngredientSubstituteHandler from "./app/api/generate/ingredient-substitute";
 import { Layout } from "./app/components/Layout";
 import { MainPage } from "./app/pages";
 import { RecipesPage } from "./app/pages/recipes";
@@ -91,5 +92,9 @@ export default defineApp([
     route("/generate/suggestions", generateSuggestionsHandler),
     route("/generate/recipe", generateRecipeHandler),
     route("/generate/recipe-tweaks", generateRecipeTweaksHandler),
+    route(
+      "/generate/ingredient-substitute",
+      generateIngredientSubstituteHandler
+    ),
   ]),
 ]);

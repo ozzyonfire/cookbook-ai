@@ -1,11 +1,11 @@
 "use client";
 
 import { generatedRecipeSchema } from "@/app/api/generate/recipe/schema";
-import type { Recipe } from "@generated/prisma";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
+import type { Recipe } from "@generated/prisma";
 import { useEffect } from "react";
+import { StreamingList } from "./components/list";
 import { handleGeneratedRecipe } from "./functions";
-import { IngredientOrStepList } from "./components/list";
 
 export function RecipeClient({ recipe }: { recipe: Recipe }) {
   const { submit, object, error, isLoading } = useObject({
@@ -39,14 +39,8 @@ export function RecipeClient({ recipe }: { recipe: Recipe }) {
       {error && <div>Error: {error.message}</div>}
       {object && (
         <div className="space-y-4">
-          <IngredientOrStepList
-            items={object.ingredients || []}
-            title="Ingredients"
-          />
-          <IngredientOrStepList
-            items={object.instructions || []}
-            title="Steps"
-          />
+          <StreamingList items={object.ingredients || []} title="Ingredients" />
+          <StreamingList items={object.instructions || []} title="Steps" />
         </div>
       )}
     </div>
