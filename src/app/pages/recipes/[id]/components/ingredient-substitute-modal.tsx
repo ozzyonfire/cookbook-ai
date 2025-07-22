@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  ingredientSubstituteSchema,
-  type IngredientSubstitute,
-} from "@/app/api/generate/ingredient-substitute/schema";
+import { type IngredientSubstitute } from "@/app/api/generate/ingredient-substitute/schema";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,16 +10,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { experimental_useObject as useObject } from "@ai-sdk/react";
-import type { Ingredient, Recipe } from "@generated/prisma";
+import type { Ingredient } from "@generated/prisma";
 import { Loader2, RefreshCw } from "lucide-react";
-import { useRecipeContext } from "./recipe-context";
-import { useEffect } from "react";
 
 interface IngredientSubstituteModalProps {
   isOpen: boolean;
   onClose: () => void;
   ingredient: Ingredient;
+  substitutes: (Partial<IngredientSubstitute> | undefined)[];
   onSubstitute: (substitute: string) => void;
 }
 
@@ -31,26 +26,15 @@ export function IngredientSubstituteModal({
   onClose,
   ingredient,
   onSubstitute,
+  substitutes,
 }: IngredientSubstituteModalProps) {
-  const { recipe } = useRecipeContext();
-  const { submit, object, error, isLoading } = useObject({
-    api: "/api/generate/ingredient-substitute",
-    schema: ingredientSubstituteSchema,
-  });
-
-  useEffect(() => {
-    if (isOpen) {
-      submit({ ingredient, recipe });
-    }
-  }, [isOpen, submit]);
-
   const handleSelectSubstitute = (substitute: IngredientSubstitute) => {
     onSubstitute(substitute.ingredient);
     onClose();
   };
 
   return (
-    <Dialog open={isOpen}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -63,7 +47,7 @@ export function IngredientSubstituteModal({
         </DialogHeader>
 
         <div className="space-y-4">
-          {isLoading && (
+          {substitutes.length === 0 && (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="w-6 h-6 animate-spin" />
               <span className="ml-2 text-sm text-muted-foreground">
@@ -72,15 +56,9 @@ export function IngredientSubstituteModal({
             </div>
           )}
 
-          {error && (
-            <div className="text-destructive text-sm text-center py-4">
-              Failed to find substitutes. Please try again.
-            </div>
-          )}
-
-          {object?.substitutes && (
+          {substitutes.length > 0 && (
             <div className="space-y-3">
-              {object.substitutes.map((substitute, index) => {
+              {substitutes.map((substitute, index) => {
                 if (!substitute?.ingredient) return null;
                 return (
                   <div
@@ -93,9 +71,6 @@ export function IngredientSubstituteModal({
                           <h4 className="font-medium">
                             {substitute.ingredient}
                           </h4>
-                          <Badge variant="secondary" className="text-xs">
-                            {substitute.ratio || "1:1"}
-                          </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {substitute.reason || "Good substitute"}

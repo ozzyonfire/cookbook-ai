@@ -61,7 +61,7 @@ export async function MainPage({ ctx }: RequestInfo) {
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           Tell us what you'd like to cook today and let our AI help you create
-          the perfect recipe tailored to your taste
+          the perfect recipe tailored to your taste.
         </p>
       </div>
 

@@ -1,11 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Pencil, Star, Trash, X } from "lucide-react";
-import { useRecipeContext } from "./recipe-context";
+import { Star, Trash } from "lucide-react";
+import { handleRegenerateRecipe } from "../functions";
+import { useRecipeContext } from "../context/recipe-context";
 
 export function RecipeActions() {
-  const { isEditMode, toggleEditMode } = useRecipeContext();
+  const { recipe } = useRecipeContext();
 
   return (
     <div className="sticky bottom-4 mt-4">
@@ -14,18 +15,13 @@ export function RecipeActions() {
           <Star className="w-4 h-4" />
           Review
         </Button>
-        <Button variant="outline" onClick={toggleEditMode}>
-          {isEditMode ? (
-            <>
-              <X className="w-4 h-4" />
-              Exit Edit
-            </>
-          ) : (
-            <>
-              <Pencil className="w-4 h-4" />
-              Edit
-            </>
-          )}
+        <Button
+          variant="outline"
+          onClick={async () => {
+            await handleRegenerateRecipe(recipe.id);
+          }}
+        >
+          Regenerate
         </Button>
         <Button variant="destructive">
           <Trash className="w-4 h-4" />

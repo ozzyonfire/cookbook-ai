@@ -40,7 +40,7 @@ export function AppProviders(props: {
               </div>
             </Link>
           </div>
-          <div className="p-6 pt-0 relative">{children}</div>
+          <div className="p-6 pt-0 relative flex-grow">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </ThemeProvider>

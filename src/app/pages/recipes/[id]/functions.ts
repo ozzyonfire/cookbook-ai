@@ -5,7 +5,7 @@ import type { RecipeTweak } from "@/app/api/generate/recipe-tweaks/schema";
 import { db } from "@/db";
 import { getRequestInfo } from "rwsdk/worker";
 
-export async function handleGeneratedRecipe(
+export async function handleSaveGeneratedRecipe(
   recipeId: string,
   generatedRecipe: GeneratedRecipe
 ) {
@@ -72,4 +72,31 @@ export async function createRecipeFromTweak(
   });
 
   return { success: recipe.id };
+}
+
+export async function handleSubstituteIngredient(
+  recipeId: string,
+  ingredientId: string,
+  substitute: string
+) {
+  await db.ingredient.update({
+    where: { id: ingredientId, recipeId },
+    data: {
+      name: substitute,
+    },
+  });
+}
+
+export async function handleRegenerateRecipe(recipeId: string) {
+  try {
+    await db.recipe.update({
+      where: { id: recipeId },
+      data: {
+        status: "PENDING",
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return { error: "Failed to regenerate recipe" };
+  }
 }

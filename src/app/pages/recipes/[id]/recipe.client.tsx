@@ -2,12 +2,12 @@
 
 import { generatedRecipeSchema } from "@/app/api/generate/recipe/schema";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
-import type { Recipe } from "@generated/prisma";
 import { useEffect } from "react";
 import { StreamingList } from "./components/list";
-import { handleGeneratedRecipe } from "./functions";
+import { handleSaveGeneratedRecipe } from "./functions";
+import type { RecipeForPage } from "./recipe.page";
 
-export function RecipeClient({ recipe }: { recipe: Recipe }) {
+export function RecipeClient({ recipe }: { recipe: RecipeForPage }) {
   const { submit, object, error, isLoading } = useObject({
     api: "/api/generate/recipe",
     schema: generatedRecipeSchema,
@@ -15,7 +15,7 @@ export function RecipeClient({ recipe }: { recipe: Recipe }) {
       console.log("hit and finish");
       console.log(result);
       if (result.object) {
-        handleGeneratedRecipe(recipe.id, result.object);
+        handleSaveGeneratedRecipe(recipe.id, result.object);
       }
     },
     onError: (error) => {

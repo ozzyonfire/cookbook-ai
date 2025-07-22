@@ -17,7 +17,7 @@ async function getRecipe(id: string) {
   return recipe;
 }
 
-export type RecipeForPage = Awaited<ReturnType<typeof getRecipe>>;
+export type RecipeForPage = NonNullable<Awaited<ReturnType<typeof getRecipe>>>;
 
 export async function RecipePage({ params }: RequestInfo) {
   const recipe = await getRecipe(params.id);

@@ -4,8 +4,11 @@ import { Button } from "@/components/ui/button";
 import type { Ingredient, Step } from "@generated/prisma";
 import { RefreshCw } from "lucide-react";
 import { useState } from "react";
-import { useRecipeContext } from "./recipe-context";
+import { useRecipeContext } from "../context/recipe-context";
 import { IngredientSubstituteModal } from "./ingredient-substitute-modal";
+import { ingredientSubstituteSchema } from "@/app/api/generate/ingredient-substitute/schema";
+import { experimental_useObject as useObject } from "@ai-sdk/react";
+import { handleSubstituteIngredient } from "../functions";
 
 function itemIsIngredient(item: Ingredient | Step): item is Ingredient {
   return "name" in item;
@@ -17,8 +20,13 @@ export function IngredientOrStepList({
 }: {
   items: (Ingredient | Step)[];
   title: string;
-  isEditMode?: boolean;
 }) {
+  const { recipe } = useRecipeContext();
+  const { submit, object, error, isLoading, stop } = useObject({
+    api: "/api/generate/ingredient-substitute",
+    schema: ingredientSubstituteSchema,
+  });
+
   const [substituteModal, setSubstituteModal] = useState<{
     isOpen: boolean;
     ingredient: Ingredient;
@@ -30,6 +38,7 @@ export function IngredientOrStepList({
   });
 
   const handleSubstitute = (ingredient: Ingredient, index: number) => {
+    submit({ ingredient, recipe });
     setSubstituteModal({
       isOpen: true,
       ingredient: ingredient,
@@ -37,14 +46,18 @@ export function IngredientOrStepList({
     });
   };
 
-  const handleSubstituteSelect = (substitute: string) => {
-    // TODO: Update the ingredient in the recipe
-    console.log(
-      "Selected substitute:",
-      substitute,
-      "for index:",
-      substituteModal.index
+  const handleSubstituteSelect = async (substitute: string) => {
+    stop();
+
+    await handleSubstituteIngredient(
+      recipe.id,
+      substituteModal.ingredient.id,
+      substitute
     );
+
+    setSubstituteModal((prev) => ({ ...prev, isOpen: false }));
+
+    // TODO: regenerate the steps
   };
 
   return (
@@ -56,7 +69,6 @@ export function IngredientOrStepList({
             <IngredientListItem
               key={item.id}
               ingredient={item}
-              index={index}
               onClick={() => handleSubstitute(item, index)}
             />
           ) : (
@@ -67,9 +79,11 @@ export function IngredientOrStepList({
 
       <IngredientSubstituteModal
         isOpen={substituteModal.isOpen}
-        onClose={() =>
-          setSubstituteModal((prev) => ({ ...prev, isOpen: false }))
-        }
+        onClose={() => {
+          setSubstituteModal((prev) => ({ ...prev, isOpen: false }));
+          stop();
+        }}
+        substitutes={object?.substitutes ?? []}
         ingredient={substituteModal.ingredient}
         onSubstitute={handleSubstituteSelect}
       />
@@ -79,30 +93,24 @@ export function IngredientOrStepList({
 
 export function IngredientListItem({
   ingredient,
-  index,
   onClick,
 }: {
   ingredient: Ingredient;
-  index: number;
   onClick: () => void;
 }) {
-  const { isEditMode } = useRecipeContext();
-
   return (
     <li key={ingredient.id} className="group">
       <div className="inline-flex items-center gap-4">
         <span>{ingredient.name}</span>
-        {isEditMode && (
-          <Button
-            size="sm"
-            variant="outline"
-            className="ml-2 h-6 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={onClick}
-          >
-            <RefreshCw className="w-3 h-3 mr-1" />
-            Substitute
-          </Button>
-        )}
+        <Button
+          size="sm"
+          variant="outline"
+          className="ml-2 h-6 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={onClick}
+        >
+          <RefreshCw className="w-3 h-3 mr-1" />
+          Substitute
+        </Button>
       </div>
     </li>
   );

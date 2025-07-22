@@ -3,6 +3,8 @@ import { streamObject } from "ai";
 import type { RequestInfo } from "rwsdk/worker";
 import { env } from "cloudflare:workers";
 import { ingredientSubstituteSchema } from "./schema";
+import type { Ingredient, Recipe } from "@generated/prisma";
+import type { RecipeForPage } from "@/app/pages/recipes/[id]/recipe.page";
 
 const openai = createOpenAI({
   apiKey: env.OPENAI_API_KEY,
@@ -12,9 +14,11 @@ const generateIngredientSubstituteHandler = async ({
   request,
 }: RequestInfo) => {
   const body = (await request.json()) as {
-    ingredient: string;
-    recipeContext?: string;
+    ingredient: Ingredient;
+    recipe: RecipeForPage;
   };
+
+  console.log("body", body);
 
   const result = streamObject({
     model: openai("gpt-4.1-mini"),
@@ -31,14 +35,18 @@ const generateIngredientSubstituteHandler = async ({
       {
         role: "user",
         content: `
-        Find substitutes for: "${body.ingredient}"
-        ${body.recipeContext ? `Recipe context: ${body.recipeContext}` : ""}
+        Recipe: ${body.recipe.title}
+
+        The full ingredient list is:
+        ${body.recipe.ingredients.map((i) => i.name).join(", ")}
+
+        Find substitutes for: "${body.ingredient.name}"
         
         Provide 3-4 good substitutes with ratios and reasons.
         `,
       },
     ],
-    temperature: 0.5,
+    temperature: 0.7,
     onError: (error) => {
       console.log("Ingredient substitute error:", error);
     },
