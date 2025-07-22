@@ -39,10 +39,9 @@ export function ThemeProvider({
       if (currentTheme !== theme) {
         root.classList.remove(currentTheme);
         root.classList.add(theme);
+        // Update the cookie via server action
+        setThemeFn(theme);
       }
-
-      // Update the cookie via server action
-      setThemeFn(theme);
     }
   }, [theme]);
 

@@ -1,18 +1,21 @@
-import { createOpenAI } from "@ai-sdk/openai";
-import { streamObject } from "ai";
-import type { RequestInfo } from "rwsdk/worker";
-import { env } from "cloudflare:workers";
-import { generatedRecipeSchema, type GeneratedRecipe } from "./schema";
 import { db } from "@/db";
+import { createOpenAI } from "@ai-sdk/openai";
+import { streamObject, type CoreMessage } from "ai";
+import { env } from "cloudflare:workers";
+import type { RequestInfo } from "rwsdk/worker";
+import { generatedRecipeSchema } from "./schema";
 
 const openai = createOpenAI({
   apiKey: env.OPENAI_API_KEY,
 });
 
 const generateRecipeHandler = async ({ request }: RequestInfo) => {
-  const body = (await request.json()) as { recipeId: string };
+  const body = (await request.json()) as {
+    recipeId: string;
+    modification?: string;
+  };
 
-  const recipe = await db.recipe.findUnique({
+  const recipe = await db.recipe.findFirst({
     where: {
       id: body.recipeId,
     },
@@ -20,13 +23,6 @@ const generateRecipeHandler = async ({ request }: RequestInfo) => {
 
   if (!recipe) {
     return new Response(null, { status: 404 });
-  }
-
-  if (recipe.status !== "PENDING" && recipe.status !== "PROCESSING") {
-    return new Response(null, {
-      status: 400,
-      statusText: "Recipe is not pending",
-    });
   }
 
   // set the status to processing
@@ -37,25 +33,38 @@ const generateRecipeHandler = async ({ request }: RequestInfo) => {
     data: { status: "PROCESSING" },
   });
 
+  const messages: CoreMessage[] = [
+    {
+      role: "system",
+      content: `
+      You are a helpful assistant and an amazing and creative chef.
+      Given a recipe suggestion you will provide the ingredients and instructions to make the recipe.
+      `,
+    },
+    {
+      role: "user",
+      content: `
+      Generate the ingredients and instructions to make the following recipe:
+      ${JSON.stringify(recipe)}
+      `,
+    },
+  ];
+
+  if (body.modification) {
+    messages.push({
+      role: "user",
+      content: `
+      The user has requested the following modification to the recipe:
+      ${body.modification}
+      Please modify the recipe to include the user's request.
+      `,
+    });
+  }
+
   const result = streamObject({
     model: openai("gpt-4.1-mini"),
     schema: generatedRecipeSchema,
-    messages: [
-      {
-        role: "system",
-        content: `
-        You are a helpful assistant and an amazing and creative chef.
-        Given a recipe suggestion you will provide the ingredients and instructions to make the recipe.
-        `,
-      },
-      {
-        role: "user",
-        content: `
-        Generate the ingredients and instructions to make the following recipe:
-        ${JSON.stringify(recipe)}
-        `,
-      },
-    ],
+    messages,
     temperature: 0.7,
     onError: (error) => {
       console.log("hit and error");

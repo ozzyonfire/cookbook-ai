@@ -55,7 +55,7 @@ const generateRecipeSuggestionsHandler = async ({ request }: RequestInfo) => {
         - Health modifications (lighter version, protein-packed, etc.)
         - Seasonal adaptations (summer version, winter comfort, etc.)
         
-        Keep suggestions short, actionable, and inspiring.
+        Keep suggestions short (5 words or less), actionable, and inspiring.
         `,
       },
       {

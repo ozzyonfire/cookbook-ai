@@ -18,6 +18,7 @@ import { RecipePage } from "./app/pages/recipes/[id]/recipe.page";
 import { isTheme, type Theme } from "./app/shared/theme";
 import { Session } from "./session/durableObject";
 import { sessions, setupSessionStore } from "./session/store";
+import generateRecipeSuggestionsHandler from "./app/api/generate/recipe-suggestions";
 export { SessionDurableObject } from "./session/durableObject";
 
 export type AppContext = {
@@ -96,5 +97,6 @@ export default defineApp([
       "/generate/ingredient-substitute",
       generateIngredientSubstituteHandler
     ),
+    route("/generate/recipe-suggestions", generateRecipeSuggestionsHandler),
   ]),
 ]);

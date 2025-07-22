@@ -1,12 +1,32 @@
 "use client";
 
-import type { Recipe } from "@generated/prisma";
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  generatedRecipeSchema,
+  type GeneratedRecipe,
+} from "@/app/api/generate/recipe/schema";
+import type { PartialObject } from "@/lib/utils";
+import { experimental_useObject as useObject } from "@ai-sdk/react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  type ReactNode,
+} from "react";
+import {
+  handleRegenerateRecipe,
+  handleSaveGeneratedRecipe,
+} from "../functions";
+import type { RecipeForPage } from "../recipe.page";
 
 interface RecipeContextType {
-  isEditMode: boolean;
-  toggleEditMode: () => void;
-  recipe: Recipe;
+  recipe: RecipeForPage;
+  error: Error | undefined;
+  isGenerating: boolean;
+  generatedRecipe: PartialObject<GeneratedRecipe> | undefined;
+  generateRecipe: () => void;
+  modifyRecipe: (modification: string) => void;
+  regenerateRecipe: () => void;
 }
 
 const RecipeContext = createContext<RecipeContextType | undefined>(undefined);
@@ -16,16 +36,62 @@ export function RecipeProvider({
   recipe,
 }: {
   children: ReactNode;
-  recipe: Recipe;
+  recipe: RecipeForPage;
 }) {
-  const [isEditMode, setIsEditMode] = useState(false);
+  const { submit, object, error, isLoading } = useObject({
+    api: "/api/generate/recipe",
+    schema: generatedRecipeSchema,
+    onFinish: (result) => {
+      if (result.object) {
+        handleSaveGeneratedRecipe(recipe.id, result.object);
+      }
+    },
+    onError: (error) => {
+      console.log("hit and error");
+      console.log(error);
+    },
+  });
 
-  const toggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-  };
+  const generateRecipe = useCallback(() => {
+    submit({
+      recipeId: recipe.id,
+    });
+  }, [submit, recipe.id]);
+
+  const modifyRecipe = useCallback(
+    (modification: string) => {
+      if (isLoading) return;
+      submit({
+        recipeId: recipe.id,
+        modification,
+      });
+    },
+    [submit, recipe.id]
+  );
+
+  const regenerateRecipe = useCallback(() => {
+    if (isLoading) return;
+    handleRegenerateRecipe(recipe.id);
+  }, [recipe]);
+
+  useEffect(() => {
+    if (recipe.status === "PENDING" || recipe.status === "PROCESSING") {
+      generateRecipe();
+    }
+  }, [recipe, generateRecipe]);
 
   return (
-    <RecipeContext.Provider value={{ isEditMode, toggleEditMode, recipe }}>
+    <RecipeContext.Provider
+      value={{
+        recipe,
+        error,
+        isGenerating: isLoading,
+        generatedRecipe: object,
+        generateRecipe,
+        modifyRecipe,
+        regenerateRecipe,
+      }}
+    >
       {children}
     </RecipeContext.Provider>
   );
@@ -34,7 +100,7 @@ export function RecipeProvider({
 export function useRecipeContext() {
   const context = useContext(RecipeContext);
   if (context === undefined) {
-    throw new Error("useEdit must be used within an RecipeProvider");
+    throw new Error("useRecipeContext must be used within an RecipeProvider");
   }
   return context;
 }

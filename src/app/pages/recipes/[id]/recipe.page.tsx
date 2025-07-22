@@ -2,6 +2,7 @@ import { db } from "@/db";
 import { RequestInfo } from "rwsdk/worker";
 import { RecipeClient } from "./recipe.client";
 import { EditableRecipeView } from "./components/editable-recipe-view";
+import { RecipeProvider } from "./providers/recipe-provider";
 
 async function getRecipe(id: string) {
   const recipe = await db.recipe.findUnique({
@@ -34,11 +35,9 @@ export async function RecipePage({ params }: RequestInfo) {
           <p className="text-sm text-muted-foreground">{recipe.description}</p>
         </div>
 
-        {recipe.status === "COMPLETED" ? (
+        <RecipeProvider recipe={recipe}>
           <EditableRecipeView recipe={recipe} />
-        ) : (
-          <RecipeClient recipe={recipe} />
-        )}
+        </RecipeProvider>
       </div>
     </>
   );

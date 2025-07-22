@@ -1,38 +1,10 @@
 "use client";
 
-import { generatedRecipeSchema } from "@/app/api/generate/recipe/schema";
-import { experimental_useObject as useObject } from "@ai-sdk/react";
-import { useEffect } from "react";
 import { StreamingList } from "./components/list";
-import { handleSaveGeneratedRecipe } from "./functions";
-import type { RecipeForPage } from "./recipe.page";
+import { useRecipeContext } from "./context/recipe-context";
 
-export function RecipeClient({ recipe }: { recipe: RecipeForPage }) {
-  const { submit, object, error, isLoading } = useObject({
-    api: "/api/generate/recipe",
-    schema: generatedRecipeSchema,
-    onFinish: (result) => {
-      console.log("hit and finish");
-      console.log(result);
-      if (result.object) {
-        handleSaveGeneratedRecipe(recipe.id, result.object);
-      }
-    },
-    onError: (error) => {
-      console.log("hit and error");
-      console.log(error);
-    },
-  });
-
-  useEffect(() => {
-    console.log(recipe);
-    if (recipe.status === "PENDING" || recipe.status === "PROCESSING") {
-      console.log("starting to generate recipe");
-      submit({
-        recipeId: recipe.id,
-      });
-    }
-  }, []);
+export function RecipeClient() {
+  const { error, generatedRecipe: object } = useRecipeContext();
 
   return (
     <div className="space-y-4 mt-8">

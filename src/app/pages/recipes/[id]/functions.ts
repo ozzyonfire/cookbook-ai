@@ -29,18 +29,27 @@ export async function handleSaveGeneratedRecipe(
     };
   });
 
-  await db.recipe.update({
-    where: { id: recipeId },
-    data: {
-      ingredients: {
-        create: ingredients,
+  // start transaction
+  await db.$transaction([
+    db.ingredient.deleteMany({
+      where: { recipeId },
+    }),
+    db.step.deleteMany({
+      where: { recipeId },
+    }),
+    db.recipe.update({
+      where: { id: recipeId },
+      data: {
+        ingredients: {
+          create: ingredients,
+        },
+        steps: {
+          create: steps,
+        },
+        status: "COMPLETED",
       },
-      steps: {
-        create: steps,
-      },
-      status: "COMPLETED",
-    },
-  });
+    }),
+  ]);
 }
 
 export async function createRecipeFromTweak(

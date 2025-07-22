@@ -1,7 +1,6 @@
 "use client";
 
 import { type IngredientSubstitute } from "@/app/api/generate/ingredient-substitute/schema";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

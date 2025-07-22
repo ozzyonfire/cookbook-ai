@@ -2,11 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Star, Trash } from "lucide-react";
-import { handleRegenerateRecipe } from "../functions";
 import { useRecipeContext } from "../context/recipe-context";
 
 export function RecipeActions() {
-  const { recipe } = useRecipeContext();
+  const { regenerateRecipe } = useRecipeContext();
 
   return (
     <div className="sticky bottom-4 mt-4">
@@ -15,12 +14,7 @@ export function RecipeActions() {
           <Star className="w-4 h-4" />
           Review
         </Button>
-        <Button
-          variant="outline"
-          onClick={async () => {
-            await handleRegenerateRecipe(recipe.id);
-          }}
-        >
+        <Button variant="outline" onClick={regenerateRecipe}>
           Regenerate
         </Button>
         <Button variant="destructive">

@@ -1,14 +1,14 @@
 "use client";
 
+import { ingredientSubstituteSchema } from "@/app/api/generate/ingredient-substitute/schema";
 import { Button } from "@/components/ui/button";
+import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { Ingredient, Step } from "@generated/prisma";
 import { RefreshCw } from "lucide-react";
 import { useState } from "react";
-import { useRecipeContext } from "../context/recipe-context";
-import { IngredientSubstituteModal } from "./ingredient-substitute-modal";
-import { ingredientSubstituteSchema } from "@/app/api/generate/ingredient-substitute/schema";
-import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { handleSubstituteIngredient } from "../functions";
+import type { RecipeForPage } from "../recipe.page";
+import { IngredientSubstituteModal } from "./ingredient-substitute-modal";
 
 function itemIsIngredient(item: Ingredient | Step): item is Ingredient {
   return "name" in item;
@@ -17,11 +17,12 @@ function itemIsIngredient(item: Ingredient | Step): item is Ingredient {
 export function IngredientOrStepList({
   items,
   title,
+  recipe,
 }: {
   items: (Ingredient | Step)[];
   title: string;
+  recipe: RecipeForPage;
 }) {
-  const { recipe } = useRecipeContext();
   const { submit, object, error, isLoading, stop } = useObject({
     api: "/api/generate/ingredient-substitute",
     schema: ingredientSubstituteSchema,
